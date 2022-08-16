@@ -105,7 +105,6 @@ def bar_plot(df, choosen_gender, destination):
             width=width,
             color=color,
         )
-        print(bar_width)
         bar_width = 0.5
         bar_coloring(bars, ax)
 
@@ -120,7 +119,7 @@ def bar_plot(df, choosen_gender, destination):
         choosen_gender, countries_dict[destination]), fontsize=23, pad=35)
     plt.xlabel('Age Bucket', fontsize=17,)
     plt.ylabel('Population in Thousands', fontsize=17,)
-    plt.show()
+    # plt.show()
     st.pyplot(fig)
     
 

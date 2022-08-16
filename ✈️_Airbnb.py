@@ -43,7 +43,7 @@ st.age_gender
                 """)
     
 #* =================================================== 1- Age gender DF ===========================================================
-    age_gender = pd.read_csv('airbnb/age_gender_bkts.csv')  # * reading 1st dataframe
+    age_gender = pd.read_csv(r'airbnb\age_gender_bkts.csv')  # * reading 1st dataframe
     # * dropping year column - not needed
     age_gender.drop(['year'], axis=1, inplace=True)
     st.dataframe(age_gender, width=1000)
@@ -183,7 +183,7 @@ check visualizer for more plots
 countries = pd.read_csv('airbnb\countries.csv')
 ```
                 """)
-    countries = pd.read_csv('airbnb\countries.csv')
+    countries = pd.read_csv(r'airbnb\countries.csv')
     st.dataframe(countries)
     st.markdown("""
 ## $\color{blue}{\t{Notes}}$
