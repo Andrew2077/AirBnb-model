@@ -183,7 +183,7 @@ check visualizer for more plots
 countries = pd.read_csv('airbnb\countries.csv')
 ```
                 """)
-    countries = pd.read_csv(r'airbnb\countries.csv')
+    countries = pd.read_csv('airbnb/countries.csv')
     st.dataframe(countries)
     st.markdown("""
 ## $\color{blue}{\t{Notes}}$
