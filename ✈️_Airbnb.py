@@ -180,7 +180,7 @@ check visualizer for more plots
                 
 #### let's take a look at the data
 ```python
-countries = pd.read_csv('airbnb\countries.csv')
+countries = pd.read_csv('airbnb/countries.csv')
 ```
                 """)
     countries = pd.read_csv('airbnb/countries.csv')
