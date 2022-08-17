@@ -19,7 +19,6 @@ LOGGER = get_logger(__name__)
 
 
 def run():
-
     st.set_page_config(
         page_title="Air bnb Data Visualization",
         page_icon="✈️",
@@ -28,6 +27,12 @@ def run():
     # st.write('## this is our Work Documentation ✈️', anchor='#header1')
     # st.header("## Table of Contents")
 
+    
+
+
+
+if __name__ == "__main__":
+    run()
     st.write("# this is our Work Documentation ✈️")
 
 
@@ -341,8 +346,3 @@ check utils.py for more details
 - when the language difficulty increases, the number of travellers decreases 
 - distance is a factor in the analysis but it's weight is low compared to language difficulty
 """)
-
-
-
-if __name__ == "__main__":
-    run()
