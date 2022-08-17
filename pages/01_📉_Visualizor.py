@@ -7,7 +7,11 @@ plt.rcdefaults()
 plt.style.use('seaborn-darkgrid')
 
 # * creating ususal dictionary for data
-
+st.set_page_config(
+    page_title="The Visualizor",
+    page_icon="📉",
+    layout="centered",
+)
 
 age_dict = Utils.age_dict
 countries_dict = Utils.countries_dict

@@ -22,7 +22,7 @@ def run():
     st.set_page_config(
         page_title="Air bnb Data Visualization",
         page_icon="✈️",
-        layout="wide",
+        layout="centered",
     )
     # st.write('## this is our Work Documentation ✈️', anchor='#header1')
     # st.header("## Table of Contents")
