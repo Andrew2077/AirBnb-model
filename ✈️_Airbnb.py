@@ -94,7 +94,7 @@ print('Gender :',age_gender.gender.unique())
     st.write("## 1 - BarPlots")
     st.markdown("""
 let's get our data ready for plotting first
-age_dict is a dictionary created in [Utils.py](Utils.py)
+age_dict is a dictionary created in [Utils.py](https://github.com/Andrew2077/AirBnb-model/blob/main/Utils.py)
 creating a new df using the dictionary age_dict
 
 ```python
