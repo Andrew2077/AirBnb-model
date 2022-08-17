@@ -3,7 +3,7 @@ import plotly.express as px
 import streamlit as st
 import pandas as pd
 
-
+# * dictionaries and lists
 age_dict = {
     '100+': 20,
     '95-99': 19,
@@ -30,20 +30,37 @@ age_dict = {
 
 countries_dict = {
     'PT': 'Portugal',
-    'NL' : 'Netherlands',
-    'AU' : 'Australia',
-    'CA' : 'Canada',
-    'ES' : 'Spain',
-    'IT' : 'Italy',
-    'GB' : 'United Kingdom',
-    'FR' : 'France',
-    'DE' : 'Germany',
-    'US' : 'United States',
+    'NL': 'Netherlands',
+    'AU': 'Australia',
+    'CA': 'Canada',
+    'ES': 'Spain',
+    'IT': 'Italy',
+    'GB': 'United Kingdom',
+    'FR': 'France',
+    'DE': 'Germany',
+    'US': 'United States',
 }
 
-theme = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
+theme = ["plotly", "plotly_white", "plotly_dark",
+         "ggplot2", "seaborn", "simple_white", "none"]
+
+# * functions for Visualization
+
+"""
+the functions below are used to create our visualizations.
+keep in mind it might need many adjustments to work properly for you.
+"""
+
 
 def bar_coloring(bar, ax):
+    """_summary_
+    this function simply grabs the color of each bar, and write it's value above it.
+    the text takes the color of the bar
+
+    Args:
+        bar (_type_): plot bars
+        ax (figure axes): just to acess the X-axis, to write the bar value above the bar
+    """
     bar_color = bar[0].get_facecolor()
     height = (bar[0].get_height()/100)*2
     for bar in bar:
@@ -57,8 +74,23 @@ def bar_coloring(bar, ax):
             weight='bold'
         )
 
-def dejunking(ax,fig):
-        
+
+def dejunking(ax, fig):
+    """_summary_
+    it's a function that removes unnecessary things from the plot
+    like frame, ticks, labels, etc.
+    - removes frame, spines
+    - change the fontsize of the labels, and the size of the plot.
+    - rotate the x-axis labels. and make them clearer.
+    - sets margins and padding.
+    - changing background color.
+    - apllyin best legend position.
+    - adjusting grids.
+    Args:
+        ax (axies): x, y axies of the figure, equvilant to .gca()
+        fig (figure): the figure itself
+    """
+
     x = plt.gca().xaxis
     for item in x.get_ticklabels():
         item.set_fontsize(7.5)
@@ -79,10 +111,24 @@ def dejunking(ax,fig):
     ax.margins(x=0.01)
     ax.margins(y=0.005)
 
-    plt.legend(loc ='best')
-    
+    plt.legend(loc='best')
+
 
 def bar_plot(df, choosen_gender, destination):
+    """_summary_
+    this function creates a bar plot of the population of Age_gender dataframe.
+    by choosing specfic gender and destination. the data is filtered.
+      - 2 plot options for single or both genders
+      - dejuunking function is called with in 
+      - bar coloring function is called with in
+      - adjustbale legends , and title is set.
+
+
+    Args:
+        df (Dataframe): the input dataframe
+        choosen_gender (str): gender either 'male' or 'female', can be 'both' for both genders
+        destination (str): destination, Age_gender['city_destination'] column unique values
+    """
     if choosen_gender == 'both':
         cond2 = df['country_destination'] == destination
         df1 = df[cond2]
@@ -124,19 +170,27 @@ def bar_plot(df, choosen_gender, destination):
     plt.ylabel('Population in Thousands', fontsize=17,)
     # plt.show()
     st.pyplot(fig)
-    
-    
 
 
-def box_plot(df, choosen_gender, destination, orientation='v', theme= theme[2]):
+def box_plot(df, choosen_gender, destination, orientation='v', theme=theme[2]):
+    """_summary_
+    this function creates a box plot of the population of Age with resepect to the destination and age choosen.
+    plotly is easier to wrok with than matplotlib, the few lines above are easy to understand.
+    if it didn't work for you, try reading the documentation of plotly.express.box().
+    Args:
+        df (Dataframe): Age_gender dataframe
+        choosen_gender (str): same as bar_plot
+        destination (str): same as bar_plot
+        orientation (str): can be either 'v' for vertical or 'h' for horizontal, Defaults to 'v'.
+        theme (str): plotly theme or template, Defaults to 'plotly_dark', read more at https://plotly.com/python/builtin-templates/
+    """
     if orientation == 'v':
-        x_axies = {'gender' : "Gender"}
-        y_axies = {'population_in_thousands' : "Population in Thousands"}
+        x_axies = {'gender': "Gender"}
+        y_axies = {'population_in_thousands': "Population in Thousands"}
     elif orientation == 'h':
-        y_axies = {'gender' : "Gender"}
-        x_axies = {'population_in_thousands' : "Population in Thousands"}
+        y_axies = {'gender': "Gender"}
+        x_axies = {'population_in_thousands': "Population in Thousands"}
 
-    
     if choosen_gender == 'both':
         cond2 = df['country_destination'] == destination
         df1 = df[cond2]
@@ -146,28 +200,32 @@ def box_plot(df, choosen_gender, destination, orientation='v', theme= theme[2]):
         cond2 = df['country_destination'] == destination
         df1 = df[cond1 & cond2]
 
-        
-    fig = px.box(df1, x =list(x_axies.keys())[0], y = list(y_axies.keys())[0], points= 'all', 
-                color = 'gender',template= theme, hover_data=['age_bucket'  , 'population_in_thousands'],
-                labels = {'population_in_thousands': 'Population ', 'age_bucket': 'Age ',
-                        'gender': 'Gender '},color_discrete_map={ "male": "#1f77b4", "female": "#d62728"
-                },
-                notched=False,)
-             
+    fig = px.box(df1, x=list(x_axies.keys())[0], y=list(y_axies.keys())[0], points='all',
+                 color='gender', template=theme, hover_data=['age_bucket', 'population_in_thousands'],
+                 labels={'population_in_thousands': 'Population ', 'age_bucket': 'Age ',
+                         'gender': 'Gender '}, color_discrete_map={"male": "#1f77b4", "female": "#d62728"
+                                                                   },
+                 notched=False,)
 
     fig.update_layout(height=600, width=800)
-    fig.update_layout(title_text='Flights of {}s to {}'.format(choosen_gender, countries_dict[destination]), title_x=0.5)
+    fig.update_layout(title_text='Flights of {}s to {}'.format(
+        choosen_gender, countries_dict[destination]), title_x=0.5)
     # fig.show()
     st.plotly_chart(fig, use_container_width=True)
 
 
-
-
 def heatmap_plottly(df):
-    theme = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
+    """_summary_
+    this function creates a heatmap of the population of Age with resepect to the destination and age choosen.
+    again plotly makes it easier, read the few lines above to understand.
+    if it didn't work for you, try reading the documentation of plotly.expess.imshow().
+    Args:
+        df (Dataframe): any dataframe for which you want to create a heatmap
+    """
+    theme = ["plotly", "plotly_white", "plotly_dark",
+             "ggplot2", "seaborn", "simple_white", "none"]
     fig = px.imshow(df.corr().round(3), text_auto="True", template=theme[2],
                     color_continuous_scale="ylgnbu", aspect='auto', range_color=[-1, 1])
-
 
     fig.update_layout(height=600, width=800)
     fig.update_yaxes(tickangle=300, tickfont=dict(size=18))
@@ -176,5 +234,3 @@ def heatmap_plottly(df):
     fig.update_layout(font_size=18)
     fig.update_layout(title_text='Correlation between columns', title_x=0.5)
     st.plotly_chart(fig, use_container_width=True)
-    
-    
