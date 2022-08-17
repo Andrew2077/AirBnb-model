@@ -200,7 +200,7 @@ def box_plot(df, choosen_gender, destination, orientation='v', theme=theme[2]):
         cond2 = df['country_destination'] == destination
         df1 = df[cond1 & cond2]
 
-    fig = px.box(df1, x=list(x_axies.keys())[0], y=list(y_axies.keys())[0], points='all',
+    fig = px.box(df1, x=list(x_axies.keys())[0], y=list(y_axies.keys())[0], points='outliers',
                  color='gender', template=theme, hover_data=['age_bucket', 'population_in_thousands'],
                  labels={'population_in_thousands': 'Population ', 'age_bucket': 'Age ',
                          'gender': 'Gender '}, color_discrete_map={"male": "#1f77b4", "female": "#d62728"
