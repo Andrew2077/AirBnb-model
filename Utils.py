@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import plotly.express as px
 import streamlit as st
+import pandas as pd
 
 
 age_dict = {
@@ -39,6 +40,8 @@ countries_dict = {
     'DE' : 'Germany',
     'US' : 'United States',
 }
+
+theme = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
 
 def bar_coloring(bar, ax):
     bar_color = bar[0].get_facecolor()
@@ -122,8 +125,10 @@ def bar_plot(df, choosen_gender, destination):
     # plt.show()
     st.pyplot(fig)
     
+    
 
-def box_plot(df, choosen_gender, destination, orientation='v'):
+
+def box_plot(df, choosen_gender, destination, orientation='v', theme= theme[2]):
     if orientation == 'v':
         x_axies = {'gender' : "Gender"}
         y_axies = {'population_in_thousands' : "Population in Thousands"}
@@ -131,7 +136,7 @@ def box_plot(df, choosen_gender, destination, orientation='v'):
         y_axies = {'gender' : "Gender"}
         x_axies = {'population_in_thousands' : "Population in Thousands"}
 
-    theme = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
+    
     if choosen_gender == 'both':
         cond2 = df['country_destination'] == destination
         df1 = df[cond2]
@@ -143,7 +148,7 @@ def box_plot(df, choosen_gender, destination, orientation='v'):
 
         
     fig = px.box(df1, x =list(x_axies.keys())[0], y = list(y_axies.keys())[0], points= 'all', 
-                color = 'gender',template= theme[2], hover_data=['age_bucket'  , 'population_in_thousands'],
+                color = 'gender',template= theme, hover_data=['age_bucket'  , 'population_in_thousands'],
                 labels = {'population_in_thousands': 'Population ', 'age_bucket': 'Age ',
                         'gender': 'Gender '},color_discrete_map={ "male": "#1f77b4", "female": "#d62728"
                 },
@@ -151,7 +156,7 @@ def box_plot(df, choosen_gender, destination, orientation='v'):
              
 
     fig.update_layout(height=600, width=800)
-    fig.update_layout(title_text='Flights of {}s to {}'.format(choosen_gender, destination), title_x=0.5)
+    fig.update_layout(title_text='Flights of {}s to {}'.format(choosen_gender, countries_dict[destination]), title_x=0.5)
     # fig.show()
     st.plotly_chart(fig, use_container_width=True)
 
