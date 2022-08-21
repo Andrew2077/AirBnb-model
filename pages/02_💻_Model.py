@@ -274,7 +274,7 @@ train_modified_age = fill_missing_numerical(df = train['age'], method = 'mean')
 indices = train_modified_age.index
 train = train.iloc[indices]
 train['age'] = train_modified_age
-train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = 'ffill')
+train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = 'bfill')
         
 modified_df = discrete_categories(train, cols)
 
@@ -282,4 +282,20 @@ x_all = modified_df[modified_df.columns[:-1]]
 y_all = modified_df[modified_df.columns[-1]]
 
 st.write('score: ', print_score(DecisionTreeClassifier(), x_all, y_all))
+
+st.markdown("""
+## $\color {red} {\t {Insights}}$
+- the Accuracy is so low at 72.36% which is not good
+- keep in that we haven't taken time series data into account
+- imputing age with Mean and FAT with backward filling, has performed the best so far
+- you can check scores on testing tap 
+
+### $\color {red} {\t {Notes}}$
+- why Decision Tree classifier ?
+     - it's a good model to use for classification problems
+     - we have 10 features to work with, so it's a faster model than other models
+     - there are other models that can predict much better than Decision Tree classifier, but will need lot of work
+---
+---
+""")
 
