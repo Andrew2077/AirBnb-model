@@ -62,7 +62,7 @@ with the ability to adjust the IQR ratio and the number of outlayers to be remov
 ```python
 fill_missing_numerical(df, methode, IQR_ratio=5, show_outlayers_num=False, show_dist_plot=False, show_values_range=False)
 ``` 
-check $\color {blue} {\t {fill_missing_numerical()}}$ in [model_utils.py]() for more details
+check fill_missing_numerical() in [model_utils.py](https://github.com/Andrew2077/AirBnb-model/blob/main/model_utils.py) for more details
 
 there are 4 imputation methods that are are available in the implementation 
 
@@ -82,7 +82,7 @@ df = df.fillna(method='bfill')
 ```python
 df = df.fillna(method='ffill')
 ```
-check [models_utils.py](model_utils.py) for more details on how it was implemented
+check [models_utils.py](https://github.com/Andrew2077/AirBnb-model/blob/main/model_utils.py) for more details on how it was implemented
 and let's see how will this effect the distribution of the data
 
 ```python
@@ -136,7 +136,7 @@ Using fill_missing_numerical() function to fill missing categorical values
 ```python
 fill_missing_categorical(df, method)
 ``` 
-check $\color {blue} {\t {fill_missing_categorical()}}$ in [model_utils.py]() for more details
+check fill_missing_categorical() in [model_utils.py](https://github.com/Andrew2077/AirBnb-model/blob/main/model_utils.py) for more details
 
 there are 4 imputation methods that are available in the implementation 
 - imputing with the Mode
@@ -157,7 +157,7 @@ df = df.fillna(method='bfill')
 ```python
 df = df.fillna(method='ffill')
 ```
-check [models_utils.py](model_utils.py) for more details on how it was implemented
+check [models_utils.py](https://github.com/Andrew2077/AirBnb-model/blob/main/model_utils.py) for more details on how it was implemented
 and let's see how will this effect the distribution of the data
 
 ```python
