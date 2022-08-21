@@ -1,4 +1,6 @@
 from streamlit.logger import get_logger
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import metrics
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import streamlit as st

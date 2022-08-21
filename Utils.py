@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import streamlit as st
 import pandas as pd
+import numpy as np
 
 # * dictionaries and lists
 age_dict = {
@@ -234,3 +235,5 @@ def heatmap_plottly(df):
     fig.update_layout(font_size=18)
     fig.update_layout(title_text='Correlation between columns', title_x=0.5)
     st.plotly_chart(fig, use_container_width=True)
+
+
