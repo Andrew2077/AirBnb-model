@@ -178,7 +178,7 @@ def distribution_plot_categorical(df, title='FAT', feature2_val='all', bins=12, 
     
     
     Original_dist = go.Histogram(
-        x=df, nbinsx=bins, name="Orginial Distribution")
+        x=df, nbinsx=bins, name="Orginial")
 
     median_fixed_dist = go.Histogram(
         x=mode_fixed,  nbinsx=bins, name="Mode-fixed")
