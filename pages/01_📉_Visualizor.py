@@ -89,6 +89,8 @@ if Acc_test == False :
         st.write("""
         ### Visualizor
         - choose a country
+        - AGE for training data age feature
+        - FAT for training data first_affiliate_tracked feature
         """)
         # train = Train_Data_ori.copy()
         choosen_feature = st.sidebar.selectbox("Select a feature", ['AGE', 'FAT'])
