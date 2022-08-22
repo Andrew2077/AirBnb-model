@@ -1,5 +1,7 @@
 import Utils
+import model_utils
 import pandas as pd
+
 from Utils import *
 from model_utils import*
 
@@ -16,6 +18,7 @@ st.set_page_config(
 
 age_dict = Utils.age_dict
 countries_dict = Utils.countries_dict
+country_dict_all = model_utils.country_dict_all
 
 
 # * data processing
