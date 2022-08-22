@@ -9,6 +9,8 @@ from Utils import countries_dict
 
 country_dict_all = countries_dict.copy()
 country_dict_all['all'] = 'All Countries'
+country_dict_all['other'] = 'Other Countries'
+country_dict_all['NDF'] = 'No destination found'
 
 cols = ['gender', 'signup_method', 'signup_flow', 'language',
         'affiliate_channel', 'affiliate_provider', 'first_affiliate_tracked',
