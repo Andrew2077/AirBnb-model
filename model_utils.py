@@ -5,13 +5,29 @@ import plotly.graph_objects as go
 import streamlit as st
 import numpy as np
 
+from Utils import countries_dict
 
+country_dict_all = countries_dict.copy()
+country_dict_all['all'] = 'All Countries'
 
 cols = ['gender', 'signup_method', 'signup_flow', 'language',
         'affiliate_channel', 'affiliate_provider', 'first_affiliate_tracked',
         'signup_app', 'first_device_type', 'first_browser',
         ]
 
+AGE_method ={
+    'Imputation by mean':'mean',
+    'Imputation by median': 'median',
+    'Imputation by backfill': 'bfill',
+    'Imputation by forwardfill': 'ffill',
+}
+
+FAT_method= {
+    'Imputation by mode':'mode',
+    'Imputation by random value':'random',
+    'Imputation by backfill':'bfill',
+    'Imputation by forwardfill':'ffill',
+}
 def fill_missing_numerical(df, method, IQR_ratio=5, show_outlayers_num=False, show_dist_plot=False, show_values_range=False):
     df.describe()
     Q1 = df.describe().loc['25%']
@@ -120,10 +136,10 @@ def distribution_plot_numerical(df, title='Age', feature2_val='all', bins=120, f
     fig.update_layout(height=600)
     if feature2_val == 'all':
         fig.update_layout(
-            title_text=f'{title} distributions of all countries', title_x=0.45)
+            title_text=f'{title} distributions of All countries', title_x=0.3)
     else:
         fig.update_layout(
-            title_text=f'{title} distributions of {feature2_val}', title_x=0.55)
+            title_text=f'{title} distributions of {country_dict_all[feature2_val]}', title_x=0.3)
     fig.update_layout(template='plotly_dark')
     fig.update_layout(font_size=15)
     fig.update_layout(title_font_size=24)
@@ -136,7 +152,7 @@ def distribution_plot_numerical(df, title='Age', feature2_val='all', bins=120, f
     
     
     
-def distribution_plot_categorical(df, title='FAT', country='all', bins=12, feature1 = 'first_affiliate_tracked', feature2 ='country_destination'):
+def distribution_plot_categorical(df, title='FAT', feature2_val='all', bins=12, feature1 = 'first_affiliate_tracked', feature2 ='country_destination'):
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
 
@@ -149,10 +165,10 @@ def distribution_plot_categorical(df, title='FAT', country='all', bins=12, featu
                                [{}, {}],
                                ])
    
-    if country == 'all':
+    if feature2_val == 'all':
         df = df[feature1]
     else:
-        df = df[df[feature2] == country][feature1]
+        df = df[df[feature2] == feature2_val][feature1]
 
     mode_fixed = fill_missing_categorical(df, 'mode')
     random_fixed = fill_missing_categorical(df, 'random')
@@ -187,12 +203,12 @@ def distribution_plot_categorical(df, title='FAT', country='all', bins=12, featu
     # fig.update_layout(title_text="Age Distribution", xaxis_title="Age", yaxis_title="Count")
     fig.update_traces(opacity=0.65)
     fig.update_layout(height=600)
-    if country == 'all':
+    if feature2_val == 'all':
         fig.update_layout(
             title_text=f'{title} distributions of all countries', title_x=0.4)
     else:
         fig.update_layout(
-            title_text=f'{title} distributions of {country}', title_x=0.4)
+            title_text=f'{title} distributions of {country_dict_all[feature2_val]}', title_x=0.4)
     fig.update_layout(template='plotly_dark')
     #fig.update_layout(font_size=15)
     fig.update_layout(title_font_size=24)

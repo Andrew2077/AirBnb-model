@@ -164,7 +164,7 @@ and let's see how will this effect the distribution of the data
 distribution_plot_cate(df, title='FAT', country='all', bins=12, feature1 = 'first_affiliate_tracked', feature2 ='country_destination')
 ```
 """)
-distribution_plot_categorical(train, title='FAT', country='all', bins=12, feature1 = 'first_affiliate_tracked', feature2 ='country_destination')
+distribution_plot_categorical(train, title='FAT', feature2_val='all', bins=12, feature1 = 'first_affiliate_tracked', feature2 ='country_destination')
 
 
 #* ####################################################### Insights 2  #######################################################
@@ -285,7 +285,7 @@ st.write('score: ', print_score(DecisionTreeClassifier(), x_all, y_all))
 
 st.markdown("""
 ## $\color {red} {\t {Insights}}$
-- the Accuracy is so low at 72.36% which is not good
+- the Accuracy is so low at 72.35% which is not good
 - keep in that we haven't taken time series data into account
 - imputing age with Mean and FAT with backward filling, has performed the best so far
 - you can check scores on testing tap 

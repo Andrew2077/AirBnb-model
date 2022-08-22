@@ -45,6 +45,8 @@ countries_dict = {
 theme = ["plotly", "plotly_white", "plotly_dark",
          "ggplot2", "seaborn", "simple_white", "none"]
 
+
+
 # * functions for Visualization
 
 """

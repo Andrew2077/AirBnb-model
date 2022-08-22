@@ -1,6 +1,7 @@
 import Utils
 import pandas as pd
 from Utils import *
+from model_utils import*
 
 
 plt.rcdefaults()
@@ -10,7 +11,7 @@ plt.style.use('seaborn-darkgrid')
 st.set_page_config(
     page_title="The Visualizor",
     page_icon="📉",
-    layout="centered",
+    layout="wide",
 )
 
 age_dict = Utils.age_dict
@@ -24,6 +25,9 @@ age_values['values'] = age_dict.values()
 age_gender = age_gender.merge(age_values, on='age_bucket', how='inner')
 age_gender.sort_values(by='values', ascending=True, inplace=True)
 
+Train_Data_ori = pd.read_csv('airbnb/train_users_2.csv')
+train = Train_Data_ori.copy()
+
 
 countries = age_gender.country_destination.unique()
 gender = age_gender.gender.unique()
@@ -32,45 +36,93 @@ gender = age_gender.gender.unique()
 # * start of the app
 # st.title("Visualizor")
 
-st.write("""
-### Visualizor
- - choose a country
- - choose a gender 
- - and see the results
-""")
+Acc_test = st.sidebar.checkbox('Enable accuracy testing', value=False)
+if Acc_test == False :
+    choosen_data = st.sidebar.radio("Choose Data", ['Age Gender Data', 'Training Data'])
+    if choosen_data == 'Age Gender Data':
+        st.write("""
+        ### Visualizor
+        - choose a country
+        - choose a gender 
+        - and see the results
+        """)
+        choosen_gender = st.sidebar.selectbox(
+            "Select a gender", ['male', 'female', 'both'])
+        country = st.sidebar.selectbox("Select a country", countries_dict.values())
+        destination = list(countries_dict.keys())[list(countries_dict.values()).index(country)]
 
-choosen_gender = st.sidebar.selectbox(
-    "Select a gender", ['male', 'female', 'both'])
-country = st.sidebar.selectbox("Select a country", countries_dict.values())
-destination = list(countries_dict.keys())[
-    list(countries_dict.values()).index(country)]
+        #st.write(f"choosen country is : {destination}")
+        #st.write(f"choosen gender is :{gender}")
 
-#st.write(f"choosen country is : {destination}")
-#st.write(f"choosen gender is :{gender}")
+        # * filtering the data
 
-# * filtering the data
+        if choosen_gender == 'both':
+            cond2 = age_gender['country_destination'] == destination
+            df1 = age_gender[cond2]
 
-if choosen_gender == 'both':
-    cond2 = age_gender['country_destination'] == destination
-    df1 = age_gender[cond2]
-
-else:
-    cond1 = age_gender['gender'] == choosen_gender
-    cond2 = age_gender['country_destination'] == destination
-    df1 = age_gender[cond1 & cond2]
+        else:
+            cond1 = age_gender['gender'] == choosen_gender
+            cond2 = age_gender['country_destination'] == destination
+            df1 = age_gender[cond1 & cond2]
 
 
-Data, Visuals, BoxPlot = st.tabs(["Data", "Bar plot", "Box Plot"])
+        Data, Visuals, BoxPlot = st.tabs(["Data", "Bar plot", "Box Plot"])
 
-Data.subheader("Data")
-Data.write(df1)
-# * plotting the data
+        Data.subheader("Data")
+        Data.write(df1)
+        # * plotting the data
 
-Visuals.subheader("Matplotlib  barplot")
-with Visuals.container():
-    bar_plot(age_gender, choosen_gender, destination, )
+        Visuals.subheader("Matplotlib  barplot")
+        with Visuals.container():
+            bar_plot(age_gender, choosen_gender, destination, )
 
-BoxPlot.subheader("Plotly boxplot")
-with BoxPlot.container():
-    mode = st.selectbox("select a layout", ['vertical', 'horizontal'])
-    box_plot(age_gender, choosen_gender, destination, orientation=mode[0])
+        BoxPlot.subheader("Plotly boxplot")
+        with BoxPlot.container():
+            mode = st.selectbox("select a layout", ['vertical', 'horizontal'])
+            box_plot(age_gender, choosen_gender, destination, orientation=mode[0])
+
+
+    elif choosen_data == 'Training Data':
+        st.write("""
+        ### Visualizor
+        - choose a country
+        """)
+        # train = Train_Data_ori.copy()
+        choosen_feature = st.sidebar.selectbox("Select a feature", ['AGE', 'FAT'])
+        
+
+        country = st.sidebar.selectbox("Select a country", country_dict_all.values())
+        destination = list(country_dict_all.keys())[list(country_dict_all.values()).index(country)]
+        
+        if choosen_feature == 'AGE':
+            distribution_plot_numerical(train, title=choosen_feature, feature2_val = destination )
+        
+        elif choosen_feature == 'FAT':
+            distribution_plot_categorical(train, title=choosen_feature, feature2_val = destination )
+            
+if Acc_test == True :
+    AGE_manipulate = st.sidebar.radio("Age Imputation method", AGE_method.keys(), index=0)
+    FAT_manipulate = st.sidebar.radio("FAT Imputation method", FAT_method.keys(), index=2)
+    show_df = st.sidebar.checkbox('show Final Dataframe', value=False)
+    # train = pd.read_csv('train_users_2.csv')
+    
+    def get_score(train , method1 , method2 ):
+        train_modified_age = fill_missing_numerical(df = train['age'], method = method1)
+        indices = train_modified_age.index
+        train = train.iloc[indices]
+        train['age'] = train_modified_age
+        train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = method2)
+                
+        modified_df = discrete_categories(train, cols)
+
+        x_all = modified_df[modified_df.columns[:-1]]
+        y_all = modified_df[modified_df.columns[-1]]
+
+        return print_score(DecisionTreeClassifier(), x_all, y_all)
+    
+    score = str(round(get_score(train , AGE_method[AGE_manipulate], FAT_method[FAT_manipulate]), 4)*100)
+    original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
+    st.markdown(original_title, unsafe_allow_html=True)
+    if show_df == True:
+        st.dataframe(modified_df)
+    #st.write('score: ', print_score(DecisionTreeClassifier(), x_all, y_all))
