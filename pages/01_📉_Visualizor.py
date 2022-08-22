@@ -87,7 +87,7 @@ if Acc_test == False :
 
     elif choosen_data == 'Training Data':
         st.write("""
-        ### Visualizor
+        ### Distributions 
         - choose a country
         - AGE for training data age feature
         - FAT for training data first_affiliate_tracked feature
