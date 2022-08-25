@@ -93,7 +93,6 @@ def dejunking(ax, fig):
         ax (axies): x, y axies of the figure, equvilant to .gca()
         fig (figure): the figure itself
     """
-
     x = plt.gca().xaxis
     for item in x.get_ticklabels():
         item.set_fontsize(7.5)
