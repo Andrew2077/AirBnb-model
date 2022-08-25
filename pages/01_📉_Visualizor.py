@@ -40,7 +40,7 @@ gender = age_gender.gender.unique()
 # st.title("Visualizor")
 
 Acc_test = st.sidebar.checkbox('Enable accuracy testing', value=False)
-if Acc_test == False :
+if Acc_test is False :
     choosen_data = st.sidebar.radio("Choose Data", ['Age Gender Data', 'Training Data'])
     if choosen_data == 'Age Gender Data':
         st.write("""
@@ -105,7 +105,7 @@ if Acc_test == False :
         elif choosen_feature == 'FAT':
             distribution_plot_categorical(train, title=choosen_feature, feature2_val = destination )
             
-if Acc_test == True :
+if Acc_test is True :
     AGE_manipulate = st.sidebar.radio("Age Imputation method", AGE_method.keys(), index=0)
     FAT_manipulate = st.sidebar.radio("FAT Imputation method", FAT_method.keys(), index=2)
     show_df = st.sidebar.checkbox('show Final Dataframe', value=False)
@@ -128,6 +128,6 @@ if Acc_test == True :
     score = str(round(get_score(train , AGE_method[AGE_manipulate], FAT_method[FAT_manipulate]), 4)*100)
     original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
     st.markdown(original_title, unsafe_allow_html=True)
-    if show_df == True:
+    if show_df is True:
         st.dataframe(modified_df)
     #st.write('score: ', print_score(DecisionTreeClassifier(), x_all, y_all))
