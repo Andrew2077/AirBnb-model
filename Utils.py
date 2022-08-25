@@ -167,8 +167,7 @@ def bar_plot(df, choosen_gender, destination):
         plt.xticks(df1['values']*2+0.5, df1['age_bucket'])
     plt.legend(loc='best')
 
-    plt.title("Flights of {}s to {}".format(
-        choosen_gender, countries_dict[destination]), fontsize=23, pad=35)
+    plt.title(f"Flights of {choosen_gender}s to {countries_dict[destination]}", fontsize=23, pad=35)
     plt.xlabel('Age Bucket', fontsize=17,)
     plt.ylabel('Population in Thousands', fontsize=17,)
     # plt.show()
@@ -211,8 +210,7 @@ def box_plot(df, choosen_gender, destination, orientation='v', theme=theme[2]):
                  notched=False,)
 
     fig.update_layout(height=600, width=800)
-    fig.update_layout(title_text='Flights of {}s to {}'.format(
-        choosen_gender, countries_dict[destination]), title_x=0.5)
+    fig.update_layout(title_text=f'Flights of {choosen_gender}s to {countries_dict[destination]}', title_x=0.5)
     # fig.show()
     st.plotly_chart(fig, use_container_width=True)
 
