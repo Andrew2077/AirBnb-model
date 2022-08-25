@@ -86,7 +86,6 @@ def fill_missing_categorical(df, method):
 
 def distribution_plot_numerical(df, title='Age', feature2_val='all', bins=120, feature1='age', feature2='country_destination'):
     import plotly.graph_objects as go
-    from plotly.subplots import make_subplots
 
     fig = make_subplots(rows=3, cols=2, x_title=title, y_title='Count', row_heights=[0.4, 0.4, 0.4],
                         column_widths=[0.4, 0.4], vertical_spacing=0.1, horizontal_spacing=0.05,
@@ -156,7 +155,6 @@ def distribution_plot_numerical(df, title='Age', feature2_val='all', bins=120, f
     
 def distribution_plot_categorical(df, title='FAT', feature2_val='all', bins=12, feature1 = 'first_affiliate_tracked', feature2 ='country_destination'):
     import plotly.graph_objects as go
-    from plotly.subplots import make_subplots
 
     fig = make_subplots(rows=3, cols=2,  y_title='Count', row_heights=[0.4, 0.4, 0.4],
                         column_widths=[0.4, 0.4], vertical_spacing=0.23, horizontal_spacing=0.05,
