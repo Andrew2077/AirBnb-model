@@ -233,7 +233,7 @@ train = pd.read_csv('airbnb/train_users_2.csv')
 2. handle categorical missing values
 3. discretize categorical features
 4. create model
-     
+
 #### 1. handling numerical missing values
 ```python
 train_modified_age = fill_missing_numerical(df = train['age'], methode = 'mean')
@@ -275,7 +275,7 @@ indices = train_modified_age.index
 train = train.iloc[indices]
 train['age'] = train_modified_age
 train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = 'bfill')
-        
+
 modified_df = discrete_categories(train, cols)
 
 x_all = modified_df[modified_df.columns[:-1]]

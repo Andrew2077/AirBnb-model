@@ -147,10 +147,10 @@ def distribution_plot_numerical(df, title='Age', feature2_val='all', bins=120, f
     fig.update_traces(legendgrouptitle_font_size=25,
                       selector=dict(type='histogram'))
     st.plotly_chart(fig, use_container_width=True)
-    
-    
-    
-    
+
+
+
+
 def distribution_plot_categorical(df, title='FAT', feature2_val='all', bins=12, feature1 = 'first_affiliate_tracked', feature2 ='country_destination'):
 
     fig = make_subplots(rows=3, cols=2,  y_title='Count', row_heights=[0.4, 0.4, 0.4],
@@ -161,7 +161,7 @@ def distribution_plot_categorical(df, title='FAT', feature2_val='all', bins=12, 
                                [{}, {}],
                                [{}, {}],
                                ])
-   
+
     if feature2_val == 'all':
         df = df[feature1]
     else:
@@ -171,9 +171,9 @@ def distribution_plot_categorical(df, title='FAT', feature2_val='all', bins=12, 
     random_fixed = fill_missing_categorical(df, 'random')
     back_filled = fill_missing_categorical(df, 'bfill')
     forward_filled = fill_missing_categorical(df, 'ffill')
-    
-    
-    
+
+
+
     Original_dist = go.Histogram(
         x=df, nbinsx=bins, name="Orginial")
 
@@ -215,7 +215,7 @@ def distribution_plot_categorical(df, title='FAT', feature2_val='all', bins=12, 
                       selector=dict(type='histogram'))
     # fig.update_layout(margin_pad=10)
     st.plotly_chart(fig, use_container_width=True)
-    
+
 
 
 def discrete_categories(df, col):

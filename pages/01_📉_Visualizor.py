@@ -94,30 +94,30 @@ if Acc_test is False :
         """)
         # train = Train_Data_ori.copy()
         choosen_feature = st.sidebar.selectbox("Select a feature", ['AGE', 'FAT'])
-        
+
 
         country = st.sidebar.selectbox("Select a country", country_dict_all.values())
         destination = list(country_dict_all.keys())[list(country_dict_all.values()).index(country)]
-        
+
         if choosen_feature == 'AGE':
             distribution_plot_numerical(train, title=choosen_feature, feature2_val = destination )
-        
+
         elif choosen_feature == 'FAT':
             distribution_plot_categorical(train, title=choosen_feature, feature2_val = destination )
-            
+
 if Acc_test is True :
     AGE_manipulate = st.sidebar.radio("Age Imputation method", AGE_method.keys(), index=0)
     FAT_manipulate = st.sidebar.radio("FAT Imputation method", FAT_method.keys(), index=2)
     show_df = st.sidebar.checkbox('show Final Dataframe', value=False)
     # train = pd.read_csv('train_users_2.csv')
-    
+
     def get_score(train , method1 , method2 ):
         train_modified_age = fill_missing_numerical(df = train['age'], method = method1)
         indices = train_modified_age.index
         train = train.iloc[indices]
         train['age'] = train_modified_age
         train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = method2)
-                
+
         modified_df = discrete_categories(train, cols)
 
         x_all = modified_df[modified_df.columns[:-1]]
