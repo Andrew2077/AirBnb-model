@@ -122,12 +122,12 @@ if Acc_test is True :
 
         x_all = modified_df[modified_df.columns[:-1]]
         y_all = modified_df[modified_df.columns[-1]]
-
+        if show_df is True:
+            st.dataframe(modified_df)
         return print_score(DecisionTreeClassifier(), x_all, y_all)
     
     score = str(round(get_score(train , AGE_method[AGE_manipulate], FAT_method[FAT_manipulate]), 4)*100)
     original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
     st.markdown(original_title, unsafe_allow_html=True)
-    if show_df is True:
-        st.dataframe(modified_df)
+  
     #st.write('score: ', print_score(DecisionTreeClassifier(), x_all, y_all))
