@@ -43,7 +43,7 @@ gender = age_gender.gender.unique()
 
 Acc_test = st.sidebar.checkbox('Enable accuracy testing', value=False)
 if Acc_test is False :
-    choosen_data = st.sidebar.radio("Choose Data", ['Age Gender Data', 'Training Data'])
+    choosen_data = st.sidebar.radio("Choose Data", ['Age Gender Data', 'Training Data', 'Time Series'])
     if choosen_data == 'Age Gender Data':
         st.write("""
         ### Visualizor
@@ -106,6 +106,9 @@ if Acc_test is False :
 
         elif choosen_feature == 'FAT':
             distribution_plot_categorical(train, title=choosen_feature, feature2_val = destination )
+            
+    elif choosen_data == "Time Analysis":
+        trainsize = st.sidebar.slider("Select a training size", 0.1, 0.9, 0.5, 0.1)
 
 if Acc_test is True :
     train['Month_Reg'] = pd.to_datetime(train.date_account_created).dt.month
@@ -130,7 +133,7 @@ if Acc_test is True :
     indices = train_modified_age.index
     train = train.iloc[indices]
     train['age'] = train_modified_age
-    train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = AGE_method[FAT_manipulate])
+    train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = FAT_method[FAT_manipulate])
 
     train = discrete_categories(train, cols)
     train.drop(['id', 'date_account_created','timestamp_first_active', 'date_first_booking'], axis=1, inplace=True)
@@ -149,9 +152,12 @@ if Acc_test is True :
     
     if Model_selection == 'Decision Tree Classifier':
         score = str(round(print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, ytest), 4)*100)
+        original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
     elif Model_selection == 'Random Forest':
         score = str(round(print_score(RandomForestClassifier(criterion = 'entropy'), xtrain, ytrain, xtest, ytest), 4)*100)
-    original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
+        original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
+    elif Model_selection == 'XGBoost': 
+        original_title = 'Stay tuned for XGBoost'
     st.markdown(original_title, unsafe_allow_html=True)
   
     #st.write('score: ', print_score(DecisionTreeClassifier(), x_all, y_all))

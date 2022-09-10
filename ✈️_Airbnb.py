@@ -358,3 +358,7 @@ check utils.py for more details
 - when the language difficulty increases, the number of travellers decreases 
 - distance is a factor in the analysis but it's weight is low compared to language difficulty
 """)
+    
+st.markdown ("""
+## $\color {red} {\t {Outlayer- Robusticity }}$
+""")
