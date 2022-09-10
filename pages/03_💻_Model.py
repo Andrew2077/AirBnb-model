@@ -9,9 +9,16 @@ st.set_page_config(
      layout="wide",
      initial_sidebar_state="expanded",
 )
-#* ##################################################### reading data #######################################################
-st.markdown("""## $\color{#1f77b4}{\t{Training DataSet}}$ """)
-st.markdown("""
+#* ##################################################### Main plan #######################################################
+st.markdown("""## $\color{#69109c}{\t{Training DataSet}}$ 
+            
+- ##### $\color{#439c10}{\t{1- Features Adjustments}}$ 
+- ##### $\color{#439c10}{\t{2- Handling Missing Values}}$ 
+- ##### $\color{#439c10}{\t{3- Model Training}}$
+
+""")
+
+st.markdown("""         
 Let's first take a look at our training data 
 ```python
 train = pd.read_csv('airbnb/train_users_2.csv')
@@ -29,6 +36,25 @@ st.markdown("""showing training df head
 train.head(10)
             """)
 st.dataframe(train.head(10))
+
+#* COlumns info 
+st.markdown("""
+### Columns to be dropped
+- id 
+```python
+train.drop(['id'], axis=1, inplace=True)) # will be dropped later on
+```   
+### Columns to be adjusted
+- all the other categroical cols 
+- Time series cols 
+
+### Columns that have missing values
+- first_affiliate_tracked 
+- age 
+            """)
+
+
+
 info = train.isna().sum()
 st.markdown("""
 now let's take a look at null values
@@ -38,9 +64,107 @@ train.isna().sum()
 """)
 st.write(info)
 
+#* ##################################################### 1- Features Adjustments #######################################################
+#* 1- signup flow
+st.markdown("""
+### $\color{#ac0020}{\t{1- Features Adjustment}}$ 
+#### $\color{#00ac8c}{\t{SignFlow}}$  the page a user came to signup up from
+```python
+train.signup_flow.value_counts()
+```
+""")
+st.write(train.signup_flow.value_counts())
+
+st.markdown("""
+it seems that the home page 0 is the most common page, replace low frequency pages with 0
+```python
+# replace low frequency pages with 0
+singupfollow_replaced = list(train.signup_flow.value_counts()[train.signup_flow.value_counts() < 400].index)  
+# the most common page
+singupfollow_replacing_value = train.signup_flow.value_counts().index[0] 
+# replacing
+train['signup_flow'].replace(singupfollow_replaced, singupfollow_replacing_value ,inplace=True) 
+```
+            """)
+singupfollow_replaced = list(train.signup_flow.value_counts()[train.signup_flow.value_counts() < 400].index)
+singupfollow_replacing_value = train.signup_flow.value_counts().index[0]
+train['signup_flow'].replace(singupfollow_replaced, singupfollow_replacing_value ,inplace=True)
+st.write(train.signup_flow.value_counts())
+
+#* language
+st.markdown("""
+#### $\color{#00ac8c}{\t{Language}}$, the language of the user
+```python
+train.language.value_counts()
+```
+""")
+st.write(train.language.value_counts())
+
+st.markdown("""
+replace low frequency languages with `other`
+```python
+# replace low frequency pages with 0
+language_replaced = list(train.language.value_counts()[train.language.value_counts() < 100].index)
+# the most common page
+language_replacing_value = 'other'
+# replacing
+train['language'].replace(language_replaced, language_replacing_value ,inplace=True)
+```
+""")
+language_replaced = list(train.language.value_counts()[train.language.value_counts() < 100].index)
+language_replacing_value = 'other'
+train['language'].replace(language_replaced, language_replacing_value ,inplace=True)
+st.write(train.language.value_counts())
+
+#* affiliate_provider
+st.markdown("""
+#### $\color{#00ac8c}{\t{affiliate - provider}}$, is a person or health care facility paid by your health care plan to provide service to you.
+```python
+train.affiliate_provider.value_counts()
+```
+""")
+st.write(train.affiliate_provider.value_counts())
+
+st.markdown("""
+replace low frequency affiliate providers with `other`
+```python
+# replace low frequency pages with 0
+affiliate_provider_replaced = list(train.affiliate_provider.value_counts()[train.affiliate_provider.value_counts() < 300].index)
+# the most common page
+affiliate_provider_replacing_value = 'other'
+# replacing
+train['affiliate_provider'].replace(affiliate_provider_replaced, affiliate_provider_replacing_value ,inplace=True)
+```
+""")
+
+affiliate_provider_replaced = list(train.affiliate_provider.value_counts()[train.affiliate_provider.value_counts() < 300].index)
+affiliate_provider_replacing_value = 'other'
+train['affiliate_provider'].replace(affiliate_provider_replaced, affiliate_provider_replacing_value ,inplace=True)
+
+st.write(train.affiliate_provider.value_counts())
+
+#* gender
+st.markdown("""
+#### $\color{#00ac8c}{\t{Gender}}$
+```python
+train.gender.value_counts()
+```
+""")
+st.write(train.gender.value_counts())
+st.markdown("""
+replace `-unknown-` with `prefere not telling`
+```python
+train['gender'].replace('-unknown-', 'prefere not telling' ,inplace=True)
+```
+""")
+train['gender'].replace('-unknown-', 'prefere_not_telling' ,inplace=True)
+
+
+
 #* ####################################################### data preprocessing - age #######################################################
 st.markdown("""
-## $\color {#2ca02c} {\t {Age - numerical }}$
+### $\color{#ac0020}{\t{2- Handling Missing Values}}$ 
+#### $\color {#00ac8c} {\t {Age - numerical }}$
 ```python
 train['age'].dtype
 ```
@@ -110,7 +234,7 @@ st.markdown("""
 #* ####################################################### data preprocessing - FAT #######################################################
 
 st.markdown("""
-## $\color {#2ca02c} {\t {FAT - categorical}}$ 
+#### $\color {#00ac8c} {\t {FAT - categorical}}$ 
 FAT is the short for **"first_affiliate_tracked"** which is the 2nd feature that has missing values
 since we already know that that Age data were numeric, let's see what is the type of FAT data
 ```python
@@ -141,7 +265,7 @@ check fill_missing_categorical() in [model_utils.py](https://github.com/Andrew20
 there are 4 imputation methods that are available in the implementation 
 - imputing with the Mode
 ```python
-df = df.replace(np.NaN, round(df.mean(), 0))
+df = df.replace(np.NaN, df.mode()[0])
 ```
 - imputing with Random Value
 ```python
@@ -181,17 +305,75 @@ st.markdown("""
 """)
 
 st.markdown("""
-## $\color {#2ca02c} {\t {DFB - TimeSeries }}$
-DFB is the short for **"date_first_booking"** which is the 3nd feature and has missing values
-times seres data type 
-### $\color {red} {\t {Stay Tuned }}$
+### $\color {#00ac8c} {\t {DFB - TimeSeries }}$
+#### date_account_created
+```python
+train.date_account_created.dtypes
+```
+
+""")
+st.write(train.date_account_created.dtypes)
+
+st.markdown("""
+```python
+# train['Year'] = pd.to_datetime(train.date_account_created).dt.year
+train['Month'] = pd.to_datetime(train.date_account_created).dt.month
+train['Day'] = pd.to_datetime(train.date_account_created).dt.day
+
+train['Month_Reg'] = train['Month_Reg'].astype(int)
+train['Day_Reg'] = train['Day_Reg'].astype(int)
+```
+after that we can drop the date_account_created column
+""")
+
+# train['Year'] = pd.to_datetime(train.date_account_created).dt.year
+train['Month_Reg'] = pd.to_datetime(train.date_account_created).dt.month
+train['Day_Reg'] = pd.to_datetime(train.date_account_created).dt.day
+train['Month_Reg'] = train['Month_Reg'].astype(int)
+train['Day_Reg'] = train['Day_Reg'].astype(int)
+
+st.markdown("""
+#### date_first_booking
+we don't have to fill the missing values of this column, as nan can be represented as 0
+```python 
+train.date_first_booking.dtype
+```
+""")
+st.write(train.date_first_booking.dtype)
+
+st.markdown("""
+```python
+train['Month_Booking'] = pd.to_datetime(train.date_first_booking).dt.month
+train['Day_Booking'] = pd.to_datetime(train.date_first_booking).dt.day
+``` 
+now let's replace the missing values with 0
+
+```python
+train['Month_Booking'] = train['Month_Booking'].replace(np.NaN, 0).astype(int)
+train['Day_Booking'] = train['Day_Booking'].replace(np.NaN, 0).astype(int)
+```
+after that we can drop the date_first_booking column
+
+#### timestamp_first_active
+
+can be used as feature but i've removed it from the model
+cause the user may have visited the website by mistake back then
 
 ---
 ---
 """)
+train['Month_Booking'] = pd.to_datetime(train.date_first_booking).dt.month
+train['Day_Booking'] = pd.to_datetime(train.date_first_booking).dt.day
+train['Month_Booking'] = train['Month_Booking'].replace(np.NaN, 0).astype(int)
+train['Day_Booking'] = train['Day_Booking'].replace(np.NaN, 0).astype(int)
+
+show_list = st.sidebar.checkbox('Show Columns', False)
+
+if show_list:
+     st.write(list(train.columns))
 
 st.markdown("""
-# $\color {blue} {\t {Predicive-Model }}$
+# $\color {blue} {\t {Predicive-Model}}$
 ---
 let's choose our features that we want to use for our model
 ```python
@@ -257,36 +439,62 @@ using the function discrete_categories() in model_utils.py to discretize categor
 ```python
 modified_df = discrete_categories(train, cols)
 ```
-### 4. create model
-spliting the data into x and y
+### 4. split data into train and test
 ```python
-x_all = modified_df[modified_df.columns[:-1]]
-y_all = modified_df[modified_df.columns[-1]]
+# drop unwanted features
+train.drop(['id', 'date_account_created','timestamp_first_active', 'date_first_booking'], axis=1, inplace=True)
+
+# creating a test sample with 10% while keeping the same distribution
+testing_part = unbaised_sample(train)
+training_part = train.iloc[train.index.delete(testing_part.index)]
+
+# finializing the data
+ytrain = training_part['country_destination']
+xtrain = training_part.drop(['country_destination'], axis=1)
+
+ytest = testing_part['country_destination']
+xtest = testing_part.drop(['country_destination'], axis=1)
 ```
-then call the function print_score() in model_utils.py to print the model score
+### 5. create model
+call the function print_score() in model_utils.py to print the model score
 ```python
-print_score(DecisionTreeClassifier(), x_all, y_all)
+print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, ytest)
 ```
 
 """)
 # train = pd.read_csv('train_users_2.csv')
+
 train_modified_age = fill_missing_numerical(df = train['age'], method = 'mean')
 indices = train_modified_age.index
 train = train.iloc[indices]
 train['age'] = train_modified_age
 train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = 'bfill')
 
-modified_df = discrete_categories(train, cols)
 
-x_all = modified_df[modified_df.columns[:-1]]
-y_all = modified_df[modified_df.columns[-1]]
 
-st.write('score: ', print_score(DecisionTreeClassifier(), x_all, y_all))
+train = discrete_categories(train, cols)
+train.drop(['id', 'date_account_created','timestamp_first_active', 'date_first_booking'], axis=1, inplace=True)
+testing_part = unbaised_sample(train)
+training_part = train.iloc[train.index.delete(testing_part.index)]
+
+ytrain = training_part['country_destination']
+xtrain = training_part.drop(['country_destination'], axis=1)
+# xtrain = discrete_categories(xtrain, cols)
+
+ytest = testing_part['country_destination']
+xtest = testing_part.drop(['country_destination'], axis=1)
+# xtest = discrete_categories(xtest, cols)
+
+
+## retrieve data to predict 
+
+# st.write('score: ', print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, ytest))
+score = str(round(print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, ytest), 4)*100)
+original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
+st.markdown(original_title, unsafe_allow_html=True)
 
 st.markdown("""
 ## $\color {red} {\t {Insights}}$
-- the Accuracy is so low at 72.35% which is not good
-- keep in that we haven't taken time series data into account
 - imputing age with Mean and FAT with backward filling, has performed the best so far
 - you can check scores on testing tap 
 

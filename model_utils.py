@@ -1,8 +1,10 @@
 from plotly.subplots import make_subplots
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.utils import shuffle
 from sklearn import metrics
 import plotly.graph_objects as go
 import streamlit as st
+import pandas as pd
 import numpy as np
 
 from Utils import countries_dict
@@ -12,9 +14,14 @@ country_dict_all['other'] = 'Other Countries'
 country_dict_all['NDF'] = 'No destination found'
 country_dict_all['all'] = 'ALL'
 
-cols = ['gender', 'signup_method', 'signup_flow', 'language',
-        'affiliate_channel', 'affiliate_provider', 'first_affiliate_tracked',
-        'signup_app', 'first_device_type', 'first_browser',
+# cols = ['gender', 'signup_method', 'signup_flow', 'language',
+#         'affiliate_channel', 'affiliate_provider', 'first_affiliate_tracked',
+#         'signup_app', 'first_device_type', 'first_browser',
+#         ]
+
+cols = ['gender', 'signup_method', 'language', 'first_affiliate_tracked',
+        'affiliate_channel','signup_app', 'affiliate_provider',
+        'first_device_type', 'first_browser',
         ]
 
 AGE_method ={
@@ -30,16 +37,24 @@ FAT_method= {
     'Imputation by backfill':'bfill',
     'Imputation by forwardfill':'ffill',
 }
-def fill_missing_numerical(df, method, IQR_ratio=5, show_outlayers_num=False, show_dist_plot=False, show_values_range=False):
-    df.describe()
-    Q1 = df.describe().loc['25%']
-    Q3 = df.describe().loc['75%']
-    IQR = Q3 - Q1
-    min_range = Q1 - IQR_ratio*IQR
-    max_range = Q3 + IQR_ratio*IQR
+def fill_missing_numerical(df, method, IQR_ratio=5, show_outlayers_num=False, 
+                           show_dist_plot=False, show_values_range=False, Box_Outlayers_remove= False):
+    
+    #removing outlayers using boxplot
+    if Box_Outlayers_remove :
+        df.describe()
+        Q1 = df.describe().loc['25%']
+        Q3 = df.describe().loc['75%']
+        IQR = Q3 - Q1
+        min_range = Q1 - IQR_ratio*IQR
+        max_range = Q3 + IQR_ratio*IQR
+        if show_values_range:
+            print(f'[min range: {min_range}, -  max range: {max_range} ]')
+        
+    # getting rid of wrong inputs
 
-    if show_values_range:
-        print(f'[min range: {min_range}, -  max range: {max_range} ]')
+    for values in df[df > 999].unique():
+        df.replace(values, 2015-values, inplace= True)
 
     if method == 'median':
         df = df.replace(np.NaN, df.median())
@@ -52,10 +67,14 @@ def fill_missing_numerical(df, method, IQR_ratio=5, show_outlayers_num=False, sh
     # df = df.replace(np.nan, df.median()).reset_index(drop=True)
     origional_len = df.isna().value_counts()
     # print(origional_len)
-    df_imputed = df[(df < max_range) & (df > min_range)]
-    counts = df_imputed.count()
-    if show_outlayers_num:
-        print(f"Outlayers removed : {origional_len[0]-counts }")
+    if Box_Outlayers_remove: 
+        df_imputed = df[(df < max_range) & (df > min_range)]
+        counts = df_imputed.count()
+        if show_outlayers_num:
+            print(f"Outlayers removed : {origional_len[0]-counts }")
+    else :
+        df_imputed = df
+
     if show_dist_plot:
         df_imputed.plot(kind='hist', bins=120)
     return df_imputed
@@ -219,17 +238,114 @@ def distribution_plot_categorical(df, title='FAT', feature2_val='all', bins=12, 
 
 
 def discrete_categories(df, col):
-    testing = df.drop(['id', 'date_account_created',
-                      'timestamp_first_active', 'date_first_booking'], axis=1, )
+    # testing = df.drop(['id', 'date_account_created',
+    #                   'timestamp_first_active', 'date_first_booking',], axis=1, )
+    testing = df
+    #testing['gender'] = testing['gender'].astype(str)
+    
     for _, value in enumerate(col):
         if len(testing[value].unique()) >= 0:
             testing[value] = testing[value].replace(
                 list(testing[value].unique()), range(0, len(list(testing[value].unique()))))
     testing["age"] = testing["age"].replace(np.nan, 0)
-    return testing.reset_index(drop=True)
+    return testing
+
+def print_score(clf, xtrain, ytrain, xtest, ytest):
+    clf = clf.fit(xtrain, ytrain)
+    y_pred = clf.predict(xtest)
+    return metrics.accuracy_score(ytest, y_pred)
+
+def unbaised_sample(df, random=12):
 
 
-def print_score(clf, x, y):
-    clf = clf.fit(x, y)
-    y_pred = clf.predict(x)
-    return metrics.accuracy_score(y, y_pred)
+    train_cleaned = df.copy()
+    #train_cleaned = train_cleaned.drop(['timestamp_first_active','date_account_created','date_first_booking'], axis=1)
+    train_sized = train_cleaned.groupby('country_destination').size().reset_index()
+    train_sized.rename(columns={0: 'count'}, inplace=True)
+    train_sized['count'] = (train_sized['count']/10).apply(np.floor)
+
+    train_sized
+    count = 0
+    for idx, value in enumerate(train_sized['country_destination']):
+        sample = shuffle(train_cleaned[train_cleaned['country_destination']
+                         == value], random_state=random)
+        sample = sample[0:int(train_sized.iloc[idx][1])]
+        if count == 0:
+            test_df = sample
+            count = 1
+
+        else:
+            test_df = pd.concat([test_df, sample])
+            # print("entered")
+
+    return test_df
+
+def Time_series_forcast(df , train_y, test_y, predictions, future_forcast ,year = 2010):
+    # year = 2010
+    counts = df
+    year2010 = counts[(counts['Date'] > str(year))& (counts['Date'] < str(year+1))].reset_index() ; year += 1
+    year2011 = counts[(counts['Date'] > str(year))& (counts['Date'] < str(year+1))].reset_index() ; year += 1
+    year2012 = counts[(counts['Date'] > str(year))& (counts['Date'] < str(year+1))].reset_index() ; year += 1
+    year2013 = counts[(counts['Date'] > str(year))& (counts['Date'] < str(year+1))].reset_index() ; year += 1
+    year2014 = counts[(counts['Date'] > str(year))& (counts['Date'] < str(year+1))].reset_index() ; year += 1
+
+
+    fig = go.Figure()
+
+    YEAR_SPAN = True
+
+    if YEAR_SPAN:
+        #* MOnths+Days
+        Line_year2010 = go.Scatter(x=year2010.index, y=year2010['count'], name="Year 2010")
+        Line_year2011 = go.Scatter(x=year2011.index, y=year2011['count'], name="Year 2011")
+        Line_year2012 = go.Scatter(x=year2012.index, y=year2012['count'], name="Year 2012")
+        Line_year2013 = go.Scatter(x=year2013.index, y=year2013['count'], name="Year 2013")
+        #Line_year2014 = go.Scatter(x=year2014.index, y=year2014['count'], name="Year 2014")
+        Line_year2014_to_may = go.Scatter(x=train_y.reset_index().index, y=train_y.values, name="Year 2014_train")
+        Line_year2014_June_real = go.Scatter(x = predictions.index, y = test_y.values, name="Year 2014_test")
+        Line_year2014_June_predict = go.Scatter(x = predictions.index, y = predictions.values.astype(int), name="Year 2014_predict")
+        Line_year2014_July_forecast = go.Scatter(x = future_forcast.index, y = future_forcast.values.astype(int), name="Year 2014_July_forecast")
+
+        
+        fig.update_layout(
+            xaxis = dict(
+                tickmode = 'array',
+                tickvals = [1,30,62,90,120,150,180,211,242,273,304,335],
+                ticktext = ['Januray','February','March','April','May','June','July','August','September','October','November','December'],
+                tickangle = 30
+            )
+        )
+        fig.update_layout(xaxis_title="Months - Span")
+    else :
+    #* Years
+        Line_year2010 = go.Scatter(x=year2010['Date'], y=year2010['count'], name="Year 2010")
+        Line_year2011 = go.Scatter(x=year2011['Date'], y=year2011['count'], name="Year 2011")
+        Line_year2012 = go.Scatter(x=year2012['Date'], y=year2012['count'], name="Year 2012")
+        Line_year2013 = go.Scatter(x=year2013['Date'], y=year2013['count'], name="Year 2013")
+        Line_year2014 = go.Scatter(x=year2014['Date'], y=year2014['count'], name="Year 2014")
+        
+        
+        
+        fig.update_xaxes(nticks=15)
+        fig.update_layout(xaxis_title="Years - Span")
+
+
+    fig.add_trace(Line_year2010)
+    fig.add_trace(Line_year2011)
+    fig.add_trace(Line_year2012)
+    fig.add_trace(Line_year2013)
+    #fig.add_trace(Line_year2014)
+    fig.add_trace(Line_year2014_to_may)
+    fig.add_trace(Line_year2014_June_real)
+    fig.add_trace(Line_year2014_June_predict)
+    fig.add_trace(Line_year2014_July_forecast)
+        
+        
+    fig.update_layout(
+            title="Number of Registers per day- from 2010 to 2014",
+            xaxis_title="Month - Span",
+            yaxis_title="Counts",
+            title_x=0.5,
+            template='plotly_dark'
+    )
+    st.plotly_chart(fig)

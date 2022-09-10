@@ -111,22 +111,22 @@ if Acc_test is True :
     show_df = st.sidebar.checkbox('show Final Dataframe', value=False)
     # train = pd.read_csv('train_users_2.csv')
 
-    def get_score(train , method1 , method2 ):
-        train_modified_age = fill_missing_numerical(df = train['age'], method = method1)
-        indices = train_modified_age.index
-        train = train.iloc[indices]
-        train['age'] = train_modified_age
-        train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = method2)
-
-        modified_df = discrete_categories(train, cols)
-
-        x_all = modified_df[modified_df.columns[:-1]]
-        y_all = modified_df[modified_df.columns[-1]]
-        if show_df is True:
-            st.dataframe(modified_df)
-        return print_score(DecisionTreeClassifier(), x_all, y_all)
     
-    score = str(round(get_score(train , AGE_method[AGE_manipulate], FAT_method[FAT_manipulate]), 4)*100)
+    train_modified_age = fill_missing_numerical(df = train['age'], method = AGE_method[AGE_manipulate])
+    indices = train_modified_age.index
+    train = train.iloc[indices]
+    train['age'] = train_modified_age
+    train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = AGE_method[FAT_manipulate])
+
+    modified_df = discrete_categories(train, cols)
+    modified_df = modified_df.drop(['first_affiliate_tracked'], axis= 1)
+    x_all = modified_df[modified_df.columns[:-1]]
+    y_all = modified_df[modified_df.columns[-1]]
+    if show_df is True:
+        st.dataframe(modified_df)
+    
+    
+    score = str(round(print_score(DecisionTreeClassifier(), x_all, y_all), 4)*100)
     original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
     st.markdown(original_title, unsafe_allow_html=True)
   
