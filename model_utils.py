@@ -37,25 +37,15 @@ FAT_method= {
     'Imputation by backfill':'bfill',
     'Imputation by forwardfill':'ffill',
 }
-def fill_missing_numerical(df, method, IQR_ratio=5, show_outlayers_num=False, 
-                           show_dist_plot=False, show_values_range=False, Box_Outlayers_remove= False):
-    
-    #removing outlayers using boxplot
-    if Box_Outlayers_remove :
-        df.describe()
-        Q1 = df.describe().loc['25%']
-        Q3 = df.describe().loc['75%']
-        IQR = Q3 - Q1
-        min_range = Q1 - IQR_ratio*IQR
-        max_range = Q3 + IQR_ratio*IQR
-        if show_values_range:
-            print(f'[min range: {min_range}, -  max range: {max_range} ]')
-        
-    # getting rid of wrong inputs
+def fill_missing_numerical(df, method, IQR_ratio=5, show_outlayers_num=False, APPLY_ZSCORE = False,
+                           show_dist_plot=False, show_values_range=False, Outlayers_remove_IQR= False):
+       
+    #* getting rid of wrong inputs
 
     for values in df[df > 999].unique():
         df.replace(values, 2015-values, inplace= True)
-
+    #* filling missing values
+    
     if method == 'median':
         df = df.replace(np.NaN, df.median())
     elif method == 'mean':
@@ -67,16 +57,31 @@ def fill_missing_numerical(df, method, IQR_ratio=5, show_outlayers_num=False,
     # df = df.replace(np.nan, df.median()).reset_index(drop=True)
     origional_len = df.isna().value_counts()
     # print(origional_len)
-    if Box_Outlayers_remove: 
+    
+    if Outlayers_remove_IQR :
+        df.describe()
+        Q1 = df.describe().loc['25%']
+        Q3 = df.describe().loc['75%']
+        IQR = Q3 - Q1
+        min_range = Q1 - IQR_ratio*IQR
+        max_range = Q3 + IQR_ratio*IQR
+        if show_values_range:
+            print(f'[min range: {min_range}, -  max range: {max_range} ]')
+            
         df_imputed = df[(df < max_range) & (df > min_range)]
         counts = df_imputed.count()
         if show_outlayers_num:
-            print(f"Outlayers removed : {origional_len[0]-counts }")
+            print(f"Outlayers removed : {origional_len[0] - counts }")
+
     else :
         df_imputed = df
 
     if show_dist_plot:
         df_imputed.plot(kind='hist', bins=120)
+    if APPLY_ZSCORE:
+        # df_imputed = zscore(df_imputed)
+        from scipy import stats
+        df_imputed = df_imputed[(np.abs(stats.zscore(df_imputed)) < 3).all(axis=1)]
     return df_imputed
 
 
