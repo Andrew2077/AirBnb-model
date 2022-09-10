@@ -118,15 +118,23 @@ if Acc_test is True :
     train['age'] = train_modified_age
     train['first_affiliate_tracked'] = fill_missing_categorical(df = train['first_affiliate_tracked'], method = AGE_method[FAT_manipulate])
 
-    modified_df = discrete_categories(train, cols)
-    modified_df = modified_df.drop(['first_affiliate_tracked'], axis= 1)
-    x_all = modified_df[modified_df.columns[:-1]]
-    y_all = modified_df[modified_df.columns[-1]]
+    train = discrete_categories(train, cols)
+    train.drop(['id', 'date_account_created','timestamp_first_active', 'date_first_booking'], axis=1, inplace=True)
+    testing_part = unbaised_sample(train)
+    training_part = train.iloc[train.index.delete(testing_part.index)]
+
+    ytrain = training_part['country_destination']
+    xtrain = training_part.drop(['country_destination'], axis=1)
+    # xtrain = discrete_categories(xtrain, cols)
+
+    ytest = testing_part['country_destination']
+    xtest = testing_part.drop(['country_destination'], axis=1)
+    
     if show_df is True:
-        st.dataframe(modified_df)
+        st.dataframe(train)
     
     
-    score = str(round(print_score(DecisionTreeClassifier(), x_all, y_all), 4)*100)
+    score = str(round(print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, ytest), 4)*100)
     original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
     st.markdown(original_title, unsafe_allow_html=True)
   
