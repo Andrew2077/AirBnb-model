@@ -150,7 +150,7 @@ if Acc_test is True :
     if Model_selection == 'Decision Tree Classifier':
         score = str(round(print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, ytest), 4)*100)
     elif Model_selection == 'Random Forest':
-        score = str(round(print_score(RandomForestClassifier(), xtrain, ytrain, xtest, ytest), 4)*100)
+        score = str(round(print_score(RandomForestClassifier(criterion = 'entropy'), xtrain, ytrain, xtest, ytest), 4)*100)
     original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
     st.markdown(original_title, unsafe_allow_html=True)
   
