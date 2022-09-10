@@ -5,6 +5,8 @@ import pandas as pd
 from Utils import *
 from model_utils import*
 
+from sklearn.ensemble import RandomForestClassifier 
+
 
 plt.rcdefaults()
 plt.style.use('seaborn-darkgrid')
@@ -106,10 +108,22 @@ if Acc_test is False :
             distribution_plot_categorical(train, title=choosen_feature, feature2_val = destination )
 
 if Acc_test is True :
+    train['Month_Reg'] = pd.to_datetime(train.date_account_created).dt.month
+    train['Day_Reg'] = pd.to_datetime(train.date_account_created).dt.day
+    train['Month_Reg'] = train['Month_Reg'].astype(int)
+    train['Day_Reg'] = train['Day_Reg'].astype(int)
+    
+    train['Month_Booking'] = pd.to_datetime(train.date_first_booking).dt.month
+    train['Day_Booking'] = pd.to_datetime(train.date_first_booking).dt.day
+    train['Month_Booking'] = train['Month_Booking'].replace(np.NaN, 0).astype(int)
+    train['Day_Booking'] = train['Day_Booking'].replace(np.NaN, 0).astype(int)
+    
     AGE_manipulate = st.sidebar.radio("Age Imputation method", AGE_method.keys(), index=0)
     FAT_manipulate = st.sidebar.radio("FAT Imputation method", FAT_method.keys(), index=2)
     show_df = st.sidebar.checkbox('show Final Dataframe', value=False)
+    Model_selection = st.sidebar.radio("Model Selection", ['Decision Tree Classifier', 'Random Forest', 'XGBoost'])
     # train = pd.read_csv('train_users_2.csv')
+
 
     
     train_modified_age = fill_missing_numerical(df = train['age'], method = AGE_method[AGE_manipulate])
@@ -133,8 +147,10 @@ if Acc_test is True :
     if show_df is True:
         st.dataframe(train)
     
-    
-    score = str(round(print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, ytest), 4)*100)
+    if Model_selection == 'Decision Tree Classifier':
+        score = str(round(print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, ytest), 4)*100)
+    elif Model_selection == 'Random Forest':
+        score = str(round(print_score(RandomForestClassifier(), xtrain, ytrain, xtest, ytest), 4)*100)
     original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
     st.markdown(original_title, unsafe_allow_html=True)
   

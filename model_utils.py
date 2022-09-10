@@ -257,7 +257,6 @@ def print_score(clf, xtrain, ytrain, xtest, ytest):
 
 def unbaised_sample(df, random=12):
 
-
     train_cleaned = df.copy()
     #train_cleaned = train_cleaned.drop(['timestamp_first_active','date_account_created','date_first_booking'], axis=1)
     train_sized = train_cleaned.groupby('country_destination').size().reset_index()
