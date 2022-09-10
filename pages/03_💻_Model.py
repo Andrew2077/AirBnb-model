@@ -373,7 +373,7 @@ if show_list:
      st.write(list(train.columns))
 
 st.markdown("""
-# $\color {blue} {\t {Predicive-Model}}$
+### $\color{#ac0020}{\t{3- Model Training}}$ 
 ---
 let's choose our features that we want to use for our model
 ```python
