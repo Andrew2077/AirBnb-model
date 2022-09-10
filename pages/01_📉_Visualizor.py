@@ -43,7 +43,7 @@ gender = age_gender.gender.unique()
 
 Acc_test = st.sidebar.checkbox('Enable accuracy testing', value=False)
 if Acc_test is False :
-    choosen_data = st.sidebar.radio("Choose Data", ['Age Gender Data', 'Training Data', 'Time Series'])
+    choosen_data = st.sidebar.radio("Choose Data", ['Age Gender Data', 'Training Data', 'Time Analysis'])
     if choosen_data == 'Age Gender Data':
         st.write("""
         ### Visualizor
