@@ -394,7 +394,7 @@ train = train.drop(['id', 'date_account_created',
      'timestamp_first_active', 'date_first_booking'], axis=1, )
 ```
 $\color {red} {\t {note}}$ : the drop features step is done inside a function called discrete_categories(): in model_utils.py
-## $\color {#2ca02c} {\t {Decision-Tree-Classifier }}$
+#### $\color {#2ca02c} {\t {Decision-Tree-Classifier }}$
 ```python
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import metrics
