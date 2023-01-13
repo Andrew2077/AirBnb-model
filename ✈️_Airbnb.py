@@ -364,5 +364,5 @@ check utils.py for more details
 """)
     
 st.markdown ("""
-## Training user data will be invistigated in model [03_💻_Model.py](page/03_💻_Model.py)
+#### Training user data will be invistigated in model [03_💻_Model.py](https://andrew2077-airbnb-model--airbnb-cpucud.streamlit.app/Model)
 """)
