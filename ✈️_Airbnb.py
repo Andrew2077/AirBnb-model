@@ -36,7 +36,7 @@ def run():
         page_icon="✈️",
         layout="centered",
     )
-    # st.write('## Airbnb New User Bookings ✈️', anchor='#header1')
+    # st.write('## this is our Work Documentation ✈️', anchor='#header1')
     # st.header("## Table of Contents")
 
     
@@ -45,7 +45,7 @@ def run():
 
 if __name__ == "__main__":
     run()
-    st.write("# this is our Work Documentation ✈️")
+    st.write("# Airbnb New User Bookings ✈️")
 
 
 #*  ================================================== Side bar==============================================================
