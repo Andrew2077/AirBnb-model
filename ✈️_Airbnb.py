@@ -364,5 +364,5 @@ check utils.py for more details
 """)
     
 st.markdown ("""
-## $\color {red} {\t {Outlayer- Robusticity }}$
+## Training user data will be invistigated in model [03_💻_Model.py](page/03_💻_Model.py)
 """)
