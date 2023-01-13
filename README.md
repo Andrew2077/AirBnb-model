@@ -3,7 +3,7 @@
 - Where will anew guest book their first travel experience?
 
 - The Kaggle [Airbnb New User Bookings](https://www.kaggle.com/competitions/airbnb-recruiting-new-user-bookings/overview) dataset contains information about users who have signed up for Airbnb and is focused on predicting where a new user will book their first travel experience. more info in the link
-
+- checck out the decumentation with streamlit [here](https://andrew2077-airbnb-model--airbnb-cpucud.streamlit.app) 
 ___
 ## **Description**
 With the use of travel destination predictions and personalized booking recommendations, this project aims to streamline the booking process for new users of the Airbnb site.
