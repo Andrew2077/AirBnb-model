@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
 #*  ================================================== Side bar==============================================================
     show_list = st.sidebar.checkbox('show list', False)
-    st.markdown("""## data investigation
+    st.markdown("""## Data Investigation
 - Age_gender_bkts.csv 
 - countries.csv
 - train_users_2.csv""")
