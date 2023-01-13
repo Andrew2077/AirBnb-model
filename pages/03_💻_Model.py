@@ -493,6 +493,43 @@ score = str(round(print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, y
 original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {score[0:5]}%</p>'
 st.markdown(original_title, unsafe_allow_html=True)
 
+test_data = pd.read_csv('airbnb/test_users.csv')
+test_data['Month_Reg'] = pd.to_datetime(test_data.date_account_created).dt.month
+test_data['Day_Reg'] = pd.to_datetime(test_data.date_account_created).dt.day
+test_data['Month_Reg'] = test_data['Month_Reg'].astype(int)
+test_data['Day_Reg'] = test_data['Day_Reg'].astype(int)
+
+test_data['Month_Booking'] = pd.to_datetime(test_data.date_first_booking).dt.month
+test_data['Day_Booking'] = pd.to_datetime(test_data.date_first_booking).dt.day
+test_data['Month_Booking'] = test_data['Month_Booking'].replace(np.NaN, 0).astype(int)
+test_data['Day_Booking'] = test_data['Day_Booking'].replace(np.NaN, 0).astype(int)
+    
+
+
+test_modified_age = fill_missing_numerical(df = test_data['age'], method = 'mean')
+indices = test_modified_age.index
+test_data = test_data.iloc[indices]
+test_data['age'] = test_modified_age
+test_data['first_affiliate_tracked'] = fill_missing_categorical(df = test_data['first_affiliate_tracked'], method = 'bfill')
+
+test_data = discrete_categories(test_data, cols)
+test_data.drop(['id', 'date_account_created','timestamp_first_active', 'date_first_booking'], axis=1, inplace=True)
+
+
+
+st.markdown(""" let's see how the model works on the test data
+```python
+train = pd.read_csv('airbnb/train_users_2.csv')
+train = train.iloc[testing_part.index]
+the score is 
+```
+""")
+
+# st.write('score: ', print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, ytest))
+test_score = str(round(print_score(DecisionTreeClassifier(), xtrain, ytrain, xtest, ytest), 4)*100)
+original_title = f'<p style="color:#1f77b4; font-size: 25px;">Accuracy Score is {test_score[0:5]}%</p>'
+st.markdown(original_title, unsafe_allow_html=True)
+
 st.markdown("""
 ## $\color {red} {\t {Insights}}$
 - imputing age with Mean and FAT with backward filling, has performed the best so far

@@ -255,10 +255,14 @@ def discrete_categories(df, col):
     testing["age"] = testing["age"].replace(np.nan, 0)
     return testing
 
-def print_score(clf, xtrain, ytrain, xtest, ytest):
+def print_score(clf, xtrain, ytrain, xtest, ytest, Testing_standalone = False):
     clf = clf.fit(xtrain, ytrain)
-    y_pred = clf.predict(xtest)
-    return metrics.accuracy_score(ytest, y_pred)
+    if Testing_standalone:
+        y_pred = clf.predict(xtest)
+        return metrics.accuracy_score(ytest, y_pred)
+    else :
+        y_pred = clf.predict(xtest)
+        return metrics.accuracy_score(ytest, y_pred)
 
 def unbaised_sample(df, random=12):
 

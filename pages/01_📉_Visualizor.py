@@ -85,6 +85,7 @@ if Acc_test is False :
         with BoxPlot.container():
             mode = st.selectbox("select a layout", ['vertical', 'horizontal'])
             box_plot(age_gender, choosen_gender, destination, orientation=mode[0])
+            
 
 
     elif choosen_data == 'Training Data':
